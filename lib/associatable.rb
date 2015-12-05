@@ -1,8 +1,6 @@
 require_relative 'searchable'
 require 'active_support/inflector'
 
-
-# Phase IIIa
 class AssocOptions
   attr_accessor(
     :foreign_key,
@@ -18,9 +16,6 @@ class AssocOptions
     model_class.table_name || class_name.tableize
   end
 
-  # def self.table_name=(value)
-  #   self.class.table_name = value
-  # end
 end
 
 class BelongsToOptions < AssocOptions
@@ -65,17 +60,15 @@ class HasManyOptions < AssocOptions
 end
 
 module Associatable
-  # Phase IIIb
   def belongs_to(name, options = {})
     opts = BelongsToOptions.new(name, options)
-    self.assoc_options[name] = opts #reference to BelongsToOptions instance
+    self.assoc_options[name] = opts
     define_method(name) do
       foreign = self.send(opts.foreign_key)
       bind = {opts.primary_key => foreign}
 
-      models = opts.model_class.where(bind).first
+      opts.model_class.where(bind).first
     end
-
   end
 
   def has_many(name, options = {})
@@ -85,7 +78,7 @@ module Associatable
 
       model_class = opts.class_name.constantize
       foreign = self.send(opts.primary_key)
-      models = model_class.where({opts.foreign_key => foreign})
+      model_class.where({opts.foreign_key => foreign})
     end
   end
 
@@ -93,11 +86,4 @@ module Associatable
     @assoc_options ||= {}
   end
 
-
-
-end
-
-class SQLObject
-  # Mixin Associatable here...
-  extend Associatable
 end

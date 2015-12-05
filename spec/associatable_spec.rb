@@ -1,4 +1,4 @@
-require 'associatable'
+require 'sql_object'
 
 describe 'AssocOptions' do
   describe 'BelongsToOptions' do
