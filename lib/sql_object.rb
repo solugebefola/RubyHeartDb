@@ -4,7 +4,18 @@ require_relative 'searchable'
 
 class SQLObject
   extend Searchable
-  
+
+    #insures column methods are generated automatically on first call
+  def method_missing(method_sym, arguments = nil)
+    method_reader = method_sym.to_s.sub("=", "").to_sym
+    if self.class.columns.include?(method_reader)
+      self.class.finalize!
+      arguments ? self.send(method_sym, arguments) : self.send(method_sym)
+    else
+      super
+    end
+  end
+
   def self.table_name=(table_name)
     @table_name = table_name
   end

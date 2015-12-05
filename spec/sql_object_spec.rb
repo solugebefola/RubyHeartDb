@@ -7,13 +7,13 @@ describe SQLObject do
 
   before(:each) do
     class Cat < SQLObject
-      self.finalize!
+      # self.finalize!
     end
 
     class Human < SQLObject
       self.table_name = 'humans'
 
-      self.finalize!
+      # self.finalize!
     end
   end
 
@@ -34,6 +34,7 @@ describe SQLObject do
 
     it '::columns creates getter methods for each column' do
       c = Cat.new
+      c.name
       expect(c.respond_to? :something).to be false
       expect(c.respond_to? :name).to be true
       expect(c.respond_to? :id).to be true
