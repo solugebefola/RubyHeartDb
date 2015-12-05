@@ -1,10 +1,10 @@
 require_relative 'db_connection'
 require 'active_support/inflector'
-# NB: the attr_accessor we wrote in phase 0 is NOT used in the rest
-# of this project. It was only a warm up.
+require_relative 'searchable'
 
 class SQLObject
-
+  extend Searchable
+  
   def self.table_name=(table_name)
     @table_name = table_name
   end
@@ -14,13 +14,13 @@ class SQLObject
   end
 
   def self.columns
-    @cols_and_data ||= DBConnection.execute2(<<-SQL)
+    @col_names ||= DBConnection.execute2(<<-SQL)
       SELECT
         *
       FROM
         #{self.table_name}
     SQL
-    @cols_and_data.first.map { |col| col.to_sym }
+    @col_names.first.map { |col| col.to_sym }
   end
 
   def self.finalize!
@@ -29,16 +29,17 @@ class SQLObject
     end
     columns.each do |column|
       define_method(column) do
-        # self.instance_variable_get("@#{column}")
         attributes[column]
       end
       define_method("#{column}=".to_sym) do |value|
-        # self.instance_variable_set("@#{column}",value)
         attributes[column] = value
       end
     end
   end
 
+  def attribute_values
+    self.class.columns.map { |col| send(col) }
+  end
 
   def self.all
     attr_collections = DBConnection.execute(<<-SQL)
@@ -62,6 +63,8 @@ class SQLObject
         #{self.table_name}
       WHERE
         #{self.table_name}.id = ?
+      LIMIT
+        1
     SQL
     parse_all(attr_collection).first
   end
@@ -77,13 +80,6 @@ class SQLObject
     end
   end
 
-  def attributes
-    # ...
-  end
-
-  def attribute_values
-    self.class.columns.map { |col| send(col) }
-  end
 
   def insert
     col_names = self.class.columns.join(", ")
@@ -101,13 +97,12 @@ class SQLObject
   end
 
   def update_items
-    update_items = self.class.columns.map { |(col, val)| "#{col} = ?"}
+    update_items = self.class.columns.map { |(col, _)| "#{col} = ?"}
     update_items.reject { |item| item == "id = ?" }.join(", ")
   end
 
 
   def update
-    puts attribute_values
     DBConnection.execute(<<-SQL, *attribute_values.rotate)
       UPDATE
         #{self.class.table_name}
@@ -116,7 +111,6 @@ class SQLObject
       WHERE
         id = ?
     SQL
-
   end
 
   def save
