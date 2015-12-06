@@ -38,7 +38,9 @@ allowing one to call, say `random_human.cats` and receive an array of all of the
 ## Future additions
 In the spirit of making this thing more interesting, I would like to add:
 - [ ] `::first` and `::last`
-- [ ] Lazy, stackable `#where` so that it doesn't query the database until necessary (lazy is a _good_ thing in this case).
+- [ ] `::where` modifications
+  - [ ] Lazy, stackable `::where` so that it doesn't query the database until necessary (lazy is a _good_ thing in this case).
+  - [ ] Enable `::where` to take a SQL-type `WHERE` string as an argument. 
 - [ ] `includes` for prefetching associated data to reduce db queries.
 - [ ] `has_many :through` associations.
 - [ ] data validations.
