@@ -1,16 +1,16 @@
-require 'sql_object'
+require 'heart_object'
 require 'securerandom'
 
-describe SQLObject do
+describe HeartObject do
   before(:each) { DBConnection.reset }
   after(:each) { DBConnection.reset }
 
   before(:each) do
-    class Cat < SQLObject
+    class Cat < HeartObject
       # self.finalize!
     end
 
-    class Human < SQLObject
+    class Human < HeartObject
       self.table_name = 'humans'
 
       # self.finalize!

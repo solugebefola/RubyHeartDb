@@ -3,7 +3,7 @@ require 'active_support/inflector'
 require_relative 'searchable'
 require_relative 'associatable'
 
-class SQLObject
+class HeartObject
   extend Searchable
   extend Associatable
 

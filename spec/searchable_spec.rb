@@ -1,15 +1,15 @@
-require 'sql_object'
+require 'heart_object'
 
 describe 'Searchable' do
   before(:each) { DBConnection.reset }
   after(:each) { DBConnection.reset }
 
   before(:all) do
-    class Cat < SQLObject
+    class Cat < HeartObject
       finalize!
     end
 
-    class Human < SQLObject
+    class Human < HeartObject
       self.table_name = 'humans'
 
       finalize!

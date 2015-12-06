@@ -1,4 +1,4 @@
-require 'sql_object'
+require 'heart_object'
 
 describe 'AssocOptions' do
   describe 'BelongsToOptions' do
@@ -48,10 +48,10 @@ describe 'AssocOptions' do
 
   describe 'AssocOptions' do
     before(:all) do
-      class Cat < SQLObject
+      class Cat < HeartObject
       end
 
-      class Human < SQLObject
+      class Human < HeartObject
         self.table_name = 'humans'
       end
     end
@@ -79,19 +79,19 @@ describe 'Associatable' do
   after(:each) { DBConnection.reset }
 
   before(:all) do
-    class Cat < SQLObject
+    class Cat < HeartObject
       belongs_to :human, foreign_key: :owner_id
 
     end
 
-    class Human < SQLObject
+    class Human < HeartObject
       self.table_name = 'humans'
 
       has_many :cats, foreign_key: :owner_id
       belongs_to :house
     end
 
-    class House < SQLObject
+    class House < HeartObject
       has_many :humans
 
     end
@@ -159,7 +159,7 @@ describe 'Associatable' do
 
   describe '::assoc_options' do
     it 'defaults to empty hash' do
-      class TempClass < SQLObject
+      class TempClass < HeartObject
       end
 
       expect(TempClass.assoc_options).to eq({})
